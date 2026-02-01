@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "535158909140",
+    "project_id": "what-should-i-do-now-1c72f",
+    "storage_bucket": "what-should-i-do-now-1c72f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:535158909140:android:e297e9ef895f29310a3341",
+        "android_client_info": {
+          "package_name": "com.example.what_should_i_do_now"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "535158909140-3ec0a5fvkuhnrhokavf4cl57g0su1rll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3GvFNvO7wBkxpqSCSvAXrdyV-KvJtBAw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "535158909140-3ec0a5fvkuhnrhokavf4cl57g0su1rll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

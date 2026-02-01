@@ -1,4 +1,6 @@
-# what_should_i_do_now
+# MAD - PROJECT
+
+## what_should_i_do_now
 
 A new Flutter project.
 

@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
+import 'theme_manager.dart';
 import 'profile_screen.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
 
   @override
+  State<SettingsScreen> createState() => _SettingsScreenState();
+}
+
+class _SettingsScreenState extends State<SettingsScreen> {
+  bool _enableNotifications = true;
+  double _textScale = 1.0;
+
+  @override
   Widget build(BuildContext context) {
+    // Check current theme mode
+    final isDarkMode = ThemeManager.themeNotifier.value == ThemeMode.dark;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFD5CFC7),
+      // Use theme background color automatically
       appBar: AppBar(
         title: const Text("Settings"),
-        backgroundColor: const Color(0xFFD5CFC7),
         elevation: 0,
       ),
       body: Padding(
@@ -28,15 +39,43 @@ class SettingsScreen extends StatelessWidget {
             ),
 
             SwitchListTile(
-              value: true,
-              onChanged: (value) {},
+              value: _enableNotifications,
+              onChanged: (value) {
+                setState(() => _enableNotifications = value);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(value ? "Notifications Enabled" : "Notifications Disabled"),
+                    duration: const Duration(seconds: 1),
+                  ),
+                );
+              },
               title: const Text("Enable Notifications"),
+              secondary: const Icon(Icons.notifications),
             ),
 
             SwitchListTile(
-              value: false,
-              onChanged: (value) {},
+              value: isDarkMode,
+              onChanged: (value) {
+                ThemeManager.toggleTheme(value);
+                // Force rebuild to update local state if needed, though ValueListenableBuilder in main handles app-wide
+                setState(() {}); 
+              },
               title: const Text("Dark Mode"),
+              secondary: const Icon(Icons.dark_mode),
+            ),
+
+            const SizedBox(height: 10),
+            
+            Text("Text Scale: ${_textScale.toStringAsFixed(1)}x"),
+            Slider(
+              value: _textScale,
+              min: 0.5,
+              max: 2.0,
+              divisions: 3,
+              label: "${_textScale.toStringAsFixed(1)}x",
+              onChanged: (value) {
+                setState(() => _textScale = value);
+              },
             ),
 
             const SizedBox(height: 20),
@@ -57,7 +96,6 @@ class SettingsScreen extends StatelessWidget {
 
             const SizedBox(height: 30),
 
-            // 👇 THIS IS THE NEW BUTTON
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -68,32 +106,12 @@ class SettingsScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.black,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 14,
-                ),
+                minimumSize: const Size(double.infinity, 50),
               ),
               child: const Text("View Profile"),
             ),
 
             const Spacer(),
-
-            Center(
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 14,
-                  ),
-                ),
-                child: const Text("Back"),
-              ),
-            ),
           ],
         ),
       ),

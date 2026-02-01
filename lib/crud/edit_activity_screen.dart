@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../models/activity_model.dart';
 import '../services/activity_service.dart';
+import 'package:intl/intl.dart';
 
 class EditActivityScreen extends StatefulWidget {
   final Activity activity;
@@ -21,6 +22,7 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
   late String _selectedDuration;
   late String _selectedEnergy;
   late String _selectedLocation;
+  late DateTime _selectedDate;
 
   bool _isLoading = false;
 
@@ -39,6 +41,7 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
     _selectedDuration = _durations.contains(widget.activity.duration) ? widget.activity.duration : _durations.first;
     _selectedEnergy = _energyLevels.contains(widget.activity.energyLevel) ? widget.activity.energyLevel : _energyLevels.first;
     _selectedLocation = _locations.contains(widget.activity.location) ? widget.activity.location : _locations.first;
+    _selectedDate = widget.activity.date;
   }
 
   @override
@@ -46,6 +49,20 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
     _titleController.dispose();
     _descController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
   }
 
   Future<void> _updateActivity() async {
@@ -59,6 +76,7 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
         duration: _selectedDuration,
         energyLevel: _selectedEnergy,
         location: _selectedLocation,
+        date: _selectedDate,
       );
 
       try {
@@ -134,9 +152,30 @@ class _EditActivityScreenState extends State<EditActivityScreen> {
               const SizedBox(height: 16),
 
               // Location Dropdown
+              // Location Dropdown
               _buildDropdown("Location", _locations, _selectedLocation, (val) {
                 setState(() => _selectedLocation = val!);
               }),
+              
+              // Date Picker UI
+              const SizedBox(height: 16),
+              const Text("Date", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                   Icon(Icons.calendar_today, size: 20, color: Colors.grey[700]), 
+                   const SizedBox(width: 10),
+                   Text(
+                    DateFormat('dd/MM/yyyy').format(_selectedDate), 
+                    style: const TextStyle(fontSize: 16),
+                   ),
+                   const Spacer(),
+                   TextButton(
+                     onPressed: _pickDate,
+                     child: const Text("Change Date"),
+                   ),
+                ],
+              ),
               const SizedBox(height: 24),
 
               // Update Button

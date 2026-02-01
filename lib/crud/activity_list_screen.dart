@@ -68,44 +68,59 @@ class ActivityListScreen extends StatelessWidget {
             padding: const EdgeInsets.all(12),
             itemBuilder: (context, index) {
               final activity = activities[index];
-              return Card(
-                color: Colors.white,
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+              return Dismissible(
+                key: Key(activity.id),
+                direction: DismissDirection.endToStart,
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: 20),
+                  color: Colors.red,
+                  child: const Icon(Icons.delete, color: Colors.white),
                 ),
-                child: ListTile(
-                  title: Text(
-                    activity.title,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                onDismissed: (direction) {
+                  _activityService.deleteActivity(activity.id);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("${activity.title} deleted")),
+                  );
+                },
+                child: Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  subtitle: Text(
-                    "${activity.duration} • ${activity.energyLevel} • ${activity.location}",
-                    style: TextStyle(color: Colors.grey[700]),
-                  ),
-                  trailing: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Edit Button
-                      IconButton(
-                        icon: const Icon(Icons.edit, color: Colors.blue),
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EditActivityScreen(activity: activity),
-                            ),
-                          );
-                        },
-                      ),
-                      // Delete Button
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: () {
-                          _showDeleteConfirmationDialog(context, activity.id);
-                        },
-                      ),
-                    ],
+                  child: ListTile(
+                    title: Text(
+                      activity.title,
+                      style: const TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    subtitle: Text(
+                      "${activity.duration} • ${activity.energyLevel} • ${activity.location}",
+                      style: TextStyle(color: Colors.grey[700]),
+                    ),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          icon: const Icon(Icons.edit, color: Colors.blue),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditActivityScreen(activity: activity),
+                              ),
+                            );
+                          },
+                        ),
+                        // Keep delete button as alternative
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Colors.red),
+                          onPressed: () {
+                            _showDeleteConfirmationDialog(context, activity.id);
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );

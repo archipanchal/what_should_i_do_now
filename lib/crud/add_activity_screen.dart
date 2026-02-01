@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../models/activity_model.dart';
 import '../services/activity_service.dart';
 
+import 'package:intl/intl.dart';
+
 class AddActivityScreen extends StatefulWidget {
   const AddActivityScreen({super.key});
 
@@ -20,12 +22,27 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
   String _selectedDuration = "5 min";
   String _selectedEnergy = "Medium";
   String _selectedLocation = "Home";
+  DateTime _selectedDate = DateTime.now();
 
   bool _isLoading = false;
 
   final List<String> _durations = ["5 min", "15 min", "30 min", "60 min"];
   final List<String> _energyLevels = ["Low", "Medium", "High"];
   final List<String> _locations = ["Home", "Outside"];
+
+  Future<void> _pickDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: _selectedDate,
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2030),
+    );
+    if (picked != null && picked != _selectedDate) {
+      setState(() {
+        _selectedDate = picked;
+      });
+    }
+  }
 
   Future<void> _saveActivity() async {
     if (_formKey.currentState!.validate()) {
@@ -52,6 +69,7 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
         duration: _selectedDuration,
         energyLevel: _selectedEnergy,
         location: _selectedLocation,
+        date: _selectedDate,
       );
 
       try {
@@ -139,6 +157,27 @@ class _AddActivityScreenState extends State<AddActivityScreen> {
               _buildDropdown("Location", _locations, _selectedLocation, (val) {
                 setState(() => _selectedLocation = val!);
               }),
+              // Date Picker UI
+              const SizedBox(height: 16),
+              const Text("Date", style: TextStyle(fontWeight: FontWeight.bold)),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                   Icon(Icons.calendar_today, size: 20, color: Colors.grey[700]), // Use default Icon for now
+                   const SizedBox(width: 10),
+                   Text(
+                    DateFormat('dd/MM/yyyy').format(_selectedDate), // Formatted date
+                    style: const TextStyle(fontSize: 16),
+                   ),
+                   const Spacer(),
+                   TextButton(
+                     onPressed: _pickDate,
+                     child: const Text("Change Date"),
+                   ),
+                ],
+              ),
+              const SizedBox(height: 16),
+
               const SizedBox(height: 24),
 
               // Save Button

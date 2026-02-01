@@ -75,27 +75,43 @@ class _RegisterScreenState extends State<RegisterScreen> {
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Full Name"),
+              decoration: const InputDecoration(
+                labelText: "Full Name",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.person),
+              ),
             ),
             const SizedBox(height: 12),
 
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(
+                labelText: "Email",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.email),
+              ),
             ),
             const SizedBox(height: 12),
 
             TextField(
               controller: passwordController,
               obscureText: true,
-              decoration: const InputDecoration(labelText: "Password"),
+              decoration: const InputDecoration(
+                labelText: "Password",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock),
+              ),
             ),
             const SizedBox(height: 12),
 
             TextField(
               controller: confirmController,
               obscureText: true,
-              decoration: const InputDecoration(labelText: "Confirm Password"),
+              decoration: const InputDecoration(
+                labelText: "Confirm Password",
+                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.lock_outline),
+              ),
             ),
             const SizedBox(height: 20),
 

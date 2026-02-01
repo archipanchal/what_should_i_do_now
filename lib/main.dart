@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import 'login_screen.dart';
 import 'home_screen.dart';
 
 import 'services/auth_service.dart';
+import 'theme_manager.dart';
 
 import 'firebase_options.dart';
 
@@ -42,9 +44,47 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: isLoggedIn ? const HomeScreen() : const SplashScreen(),
+    return ValueListenableBuilder<ThemeMode>(
+      valueListenable: ThemeManager.themeNotifier,
+      builder: (_, mode, __) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          themeMode: mode,
+          theme: ThemeData(
+            brightness: Brightness.light,
+            primaryColor: Colors.black,
+            scaffoldBackgroundColor: const Color(0xFFD5CFC7),
+            textTheme: GoogleFonts.poppinsTextTheme(),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
+              ),
+            ),
+          ),
+          darkTheme: ThemeData(
+            brightness: Brightness.dark,
+            primaryColor: Colors.white,
+            scaffoldBackgroundColor: const Color(0xFF121212),
+            textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
+            appBarTheme: const AppBarTheme(
+              backgroundColor: Color(0xFF1F1F1F),
+              foregroundColor: Colors.white,
+            ),
+            elevatedButtonTheme: ElevatedButtonThemeData(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: Colors.black,
+              ),
+            ),
+          ),
+          home: isLoggedIn ? const HomeScreen() : const SplashScreen(),
+        );
+      },
     );
   }
 }

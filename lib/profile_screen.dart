@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
+import 'services/auth_service.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Fetch current user
+    final user = AuthService.instance.currentUser;
+    final String displayName = user?.displayName != null && user!.displayName!.isNotEmpty
+        ? user.displayName!
+        : user?.email?.split('@')[0] ?? "User"; // Fallback to part of email or "User"
+    final String email = user?.email ?? "No Email";
+
     return Scaffold(
       backgroundColor: const Color(0xFFD5CFC7),
       appBar: AppBar(
@@ -30,9 +38,9 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 16),
 
-            const Text(
-              "User Name",
-              style: TextStyle(
+            Text(
+              displayName,
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
@@ -40,9 +48,9 @@ class ProfileScreen extends StatelessWidget {
 
             const SizedBox(height: 6),
 
-            const Text(
-              "user@email.com",
-              style: TextStyle(
+            Text(
+              email,
+              style: const TextStyle(
                 fontSize: 14,
                 color: Colors.black54,
               ),

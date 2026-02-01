@@ -5,6 +5,7 @@ class Activity {
   final String duration; // "5 min", "15 min", etc.
   final String energyLevel; // "Low", "Medium", "High"
   final String location; // "Home", "Outside"
+  final DateTime date;
 
   Activity({
     required this.id,
@@ -13,6 +14,7 @@ class Activity {
     required this.duration,
     required this.energyLevel,
     required this.location,
+    required this.date,
   });
 
   // Convert Activity object to Map for Firestore
@@ -23,6 +25,7 @@ class Activity {
       'duration': duration,
       'energyLevel': energyLevel,
       'location': location,
+      'date': date.toIso8601String(),
     };
   }
 
@@ -35,6 +38,9 @@ class Activity {
       duration: map['duration'] ?? '',
       energyLevel: map['energyLevel'] ?? '',
       location: map['location'] ?? '',
+      date: map['date'] != null 
+          ? DateTime.parse(map['date']) 
+          : DateTime.now(), // Fallback for old data
     );
   }
 }

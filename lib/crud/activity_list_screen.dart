@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
-import '../models/activity_model.dart';
-import '../services/activity_service.dart';
+import 'package:provider/provider.dart';
+import '../providers/activity_provider.dart';
 import 'add_activity_screen.dart';
 import 'edit_activity_screen.dart';
 
 class ActivityListScreen extends StatelessWidget {
-  final ActivityService _activityService = ActivityService();
-
-  ActivityListScreen({super.key});
+  const ActivityListScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,50 +16,17 @@ class ActivityListScreen extends StatelessWidget {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
       ),
-      body: StreamBuilder<List<Activity>>(
-        stream: _activityService.getActivities(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text("Loading activities..."),
-                ],
-              ),
-            );
-          }
-          if (snapshot.hasError) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                    const SizedBox(height: 16),
-                    Text(
-                      "Error: ${snapshot.error}",
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      "If you are on Web, ensure your Firestore Database is created in the Firebase Console.",
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Center(child: Text("No activities found. Add one!"));
+      body: Consumer<ActivityProvider>(
+        builder: (context, activityProvider, child) {
+          if (activityProvider.isLoading) {
+             return const Center(child: CircularProgressIndicator());
           }
 
-          final activities = snapshot.data!;
+          final activities = activityProvider.activities;
+
+          if (activities.isEmpty) {
+            return const Center(child: Text("No activities found. Add one!"));
+          }
 
           return ListView.builder(
             itemCount: activities.length,
@@ -78,7 +43,7 @@ class ActivityListScreen extends StatelessWidget {
                   child: const Icon(Icons.delete, color: Colors.white),
                 ),
                 onDismissed: (direction) {
-                  _activityService.deleteActivity(activity.id);
+                  activityProvider.deleteActivity(activity.id);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text("${activity.title} deleted")),
                   );
@@ -101,6 +66,17 @@ class ActivityListScreen extends StatelessWidget {
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
+                        // Favorite Button
+                        IconButton(
+                          icon: Icon(
+                            activity.isFavorite ? Icons.favorite : Icons.favorite_border,
+                            color: activity.isFavorite ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () {
+                            activityProvider.toggleFavorite(activity);
+                          },
+                        ),
+                        // Edit Button
                         IconButton(
                           icon: const Icon(Icons.edit, color: Colors.blue),
                           onPressed: () {
@@ -112,7 +88,7 @@ class ActivityListScreen extends StatelessWidget {
                             );
                           },
                         ),
-                        // Keep delete button as alternative
+                        // Delete Button
                         IconButton(
                           icon: const Icon(Icons.delete, color: Colors.red),
                           onPressed: () {
@@ -155,7 +131,7 @@ class ActivityListScreen extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              _activityService.deleteActivity(activityId);
+              context.read<ActivityProvider>().deleteActivity(activityId);
               Navigator.pop(context);
             },
             child: const Text("Delete", style: TextStyle(color: Colors.white)),

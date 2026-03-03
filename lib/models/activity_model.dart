@@ -6,6 +6,7 @@ class Activity {
   final String energyLevel; // "Low", "Medium", "High"
   final String location; // "Home", "Outside"
   final DateTime date;
+  final bool isFavorite;
 
   Activity({
     required this.id,
@@ -15,6 +16,7 @@ class Activity {
     required this.energyLevel,
     required this.location,
     required this.date,
+    this.isFavorite = false,
   });
 
   // Convert Activity object to Map for Firestore
@@ -26,6 +28,7 @@ class Activity {
       'energyLevel': energyLevel,
       'location': location,
       'date': date.toIso8601String(),
+      'isFavorite': isFavorite,
     };
   }
 
@@ -40,7 +43,8 @@ class Activity {
       location: map['location'] ?? '',
       date: map['date'] != null 
           ? DateTime.parse(map['date']) 
-          : DateTime.now(), // Fallback for old data
+          : DateTime.now(),
+      isFavorite: map['isFavorite'] ?? false,
     );
   }
 }

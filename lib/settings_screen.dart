@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'theme_manager.dart';
+import 'package:provider/provider.dart';
+import 'providers/theme_provider.dart';
 import 'profile_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -15,9 +16,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Check current theme mode
-    final isDarkMode = ThemeManager.themeNotifier.value == ThemeMode.dark;
-
     return Scaffold(
       // Use theme background color automatically
       appBar: AppBar(
@@ -53,15 +51,17 @@ class _SettingsScreenState extends State<SettingsScreen> {
               secondary: const Icon(Icons.notifications),
             ),
 
-            SwitchListTile(
-              value: isDarkMode,
-              onChanged: (value) {
-                ThemeManager.toggleTheme(value);
-                // Force rebuild to update local state if needed, though ValueListenableBuilder in main handles app-wide
-                setState(() {}); 
+            Consumer<ThemeProvider>(
+              builder: (context, themeProvider, child) {
+                return SwitchListTile(
+                  value: themeProvider.isDarkMode,
+                  onChanged: (value) {
+                    themeProvider.toggleTheme(value);
+                  },
+                  title: const Text("Dark Mode"),
+                  secondary: const Icon(Icons.dark_mode),
+                );
               },
-              title: const Text("Dark Mode"),
-              secondary: const Icon(Icons.dark_mode),
             ),
 
             const SizedBox(height: 10),

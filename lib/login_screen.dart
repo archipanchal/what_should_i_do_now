@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // Keep for FirebaseAuthException
 import 'services/auth_service.dart';
+import 'providers/user_provider.dart';
+import 'package:provider/provider.dart';
 import 'register_screen.dart';
-import 'home_screen.dart';
+// import 'home_screen.dart'; // Unused with named routes
 
 
 class LoginScreen extends StatefulWidget {
@@ -42,11 +44,12 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (!mounted) return;
+      
+      // Update User Provider
+      context.read<UserProvider>().reloadUser(); 
+
       // GO TO HOME
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const HomeScreen()),
-      );
+      Navigator.pushReplacementNamed(context, '/home');
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
